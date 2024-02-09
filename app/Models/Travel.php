@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class Travel extends Model
 {
@@ -15,6 +16,7 @@ class Travel extends Model
 
     protected $table = 'travels';
 
+    // public $perPage = 10;
     protected $fillable = [
         'is_public',
         'slug',
@@ -39,6 +41,11 @@ class Travel extends Model
     public function tours(): HasMany
     {
         return $this->hasMany(Tour::class);
+    }
+
+    public function scopeOpen(Builder $query): void
+    {
+        $query->where('is_public', '=', 1);
     }
 
     public function numberOfNights(): Attribute

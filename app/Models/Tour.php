@@ -21,6 +21,12 @@ class Tour extends Model
         'price',
     ];
 
+    protected $casts = [
+        'starting_date' => 'datetime',
+        'ending_date' => 'datetime',
+        'price' => 'decimal'
+    ];
+
     public function travel(): BelongsTo
     {
         return $this->belongsTo(Travel::class);
