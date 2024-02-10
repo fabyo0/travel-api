@@ -25,3 +25,9 @@ Route::get('travels', [TravelController::class, 'index']);
 
 //Tours
 Route::get('travels/{travel}/tours', [TourController::class, 'index']);
+
+Route::get('/test',function (){
+    return response()->json([
+        'data' => \App\Models\Tour::all()
+    ]);
+});
