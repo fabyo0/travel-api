@@ -22,8 +22,8 @@ class Tour extends Model
     ];
 
     protected $casts = [
-        'starting_date' => 'datetime',
-        'ending_date' => 'datetime',
+        'starting_date' => 'date:m/d/Y',
+        'ending_date' => 'date:m/d/Y',
         'price' => 'decimal'
     ];
 
