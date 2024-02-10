@@ -38,6 +38,11 @@ class Travel extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function tours(): HasMany
     {
         return $this->hasMany(Tour::class);
