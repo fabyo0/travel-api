@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             TravelSeeder::class,
-            TourSeeder::class
+            TourSeeder::class,
+            RoleSeeder::class
         ]);
 
         // \App\Models\User::factory(10)->create();
