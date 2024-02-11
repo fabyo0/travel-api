@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Tour;
 use App\Models\Travel;
+use Database\Factories\TourFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -42,4 +43,65 @@ class ToursListTest extends TestCase
             ->assertJsonFragment(['price' => $tourPrice]);
     }
 
+    public function test_tours_list_sorts_by_starting_date_correctly()
+    {
+        $travel = Travel::factory()->create();
+
+        $laterTour = Tour::factory()->create([
+            'travel_id' => $travel->id,
+            'starting_date' => now()->addDays(2),
+            'ending_date' => now()->addDays(3),
+        ]);
+
+        $earlierTour = Tour::factory()->create([
+            'travel_id' => $travel->id,
+            'starting_date' => now()->addDays(),
+            'ending_date' => now()->addDays(1),
+        ]);
+
+        $response = $this->get('/api/v1/travels/' . $travel->slug . '/tours');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.0.id', $earlierTour->id)
+            ->assertJsonPath('data.1.id', $laterTour->id);
+    }
+
+    public function test_tours_list_filters_by_price_correctly(): void
+    {
+        $travel = Travel::factory()->create();
+        $expensiveTour = Tour::factory()->create([
+            'travel_id' => $travel->id,
+            'price' => 200,
+        ]);
+        $cheapTour = Tour::factory()->create([
+            'travel_id' => $travel->id,
+            'price' => 100,
+        ]);
+
+        $endpoint = '/api/v1/travels/' . $travel->slug . '/tours';
+
+        $response = $this->get($endpoint . '?priceFrom=100');
+        $response->assertJsonCount(2, 'data');
+        $response->assertJsonFragment(['id' => $cheapTour->id]);
+        $response->assertJsonFragment(['id' => $expensiveTour->id]);
+
+        $response = $this->get($endpoint . '?priceFrom=150');
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonMissing(['id' => $cheapTour->id]);
+        $response->assertJsonFragment(['id' => $expensiveTour->id]);
+
+        $response = $this->get($endpoint . '?priceFrom=250');
+        $response->assertJsonCount(0, 'data');
+    }
+
+    public function test_tour_list_returns_validation_errors(): void
+    {
+        $travel = Travel::factory()->create();
+
+        $response = $this->getJson('/api/v1/travels/' . $travel->slug . '/tours?dateFrom=abcde')
+            ->assertStatus(422);
+
+        $response = $this->getJson('/api/v1/travels/' . $travel->slug . '/tours?priceFrom=abcde')
+            ->assertStatus(422);
+    }
 }
