@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\TourController;
 use App\Http\Controllers\Api\V1\TravelController;
+use App\Http\Controllers\Api\V1\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,18 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Travel(No auth)
 Route::get('travels', [TravelController::class, 'index']);
 
 //Tours
 Route::get('travels/{travel}/tours', [TourController::class, 'index']);
 
-Route::get('/test',function (){
-    return response()->json([
-        'data' => \App\Models\Tour::all()
-    ]);
+// Admin Travel
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::post('travels', [Admin\TravelController::class, 'store']);
 });
