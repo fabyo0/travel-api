@@ -29,17 +29,25 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => 'admin@admin.com',
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /*   public function configure()
-       {
-           return $this->afterCreating(function (User $user) {
-               $user->roles()->attach(Role::query()->where('name','admin')->value('id'));
-           });
-       }*/
+    public function configure(): Factory|UserFactory
+    {
+        return $this->afterCreating(function (User $user) {
+            $this->attachAdminRole($user);
+        });
+    }
+
+    protected function attachAdminRole(User $user): void
+    {
+        $role = Role::where('name', 'admin')->first();
+        if ($role) {
+            $user->roles()->attach($role->id);
+        }
+    }
 
     /**
      * Indicate that the model's email address should be unverified.
