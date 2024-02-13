@@ -18,16 +18,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Travel(No auth)
+// Travel
 Route::get('travels', [TravelController::class, 'index']);
 
 //Tours
 Route::get('travels/{travel}/tours', [TourController::class, 'index']);
 
 // Admin Travel
-Route::prefix('admin')->middleware(['auth:sanctum','role:admin'])->group(function () {
-    Route::post('travels', [Admin\TravelController::class, 'store']);
-    Route::post('travels/{travel:id}/tours', [Admin\TourController::class, 'store']);
+Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
+    Route::middleware('role:admin')->group(function () {
+        Route::post('travels', [Admin\TravelController::class, 'store']);
+        Route::post('travels/{travel:id}/tours', [Admin\TourController::class, 'store']);
+    });
+
+    Route::put('travels/{travel:id}', [Admin\TravelController::class, 'update']);
 });
 
 // Auth

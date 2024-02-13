@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Travel;
 use App\Models\User;
 use App\Models\Role;
 use Database\Seeders\RoleSeeder;
@@ -52,5 +53,34 @@ class AdminTravelTest extends TestCase
         $response->assertStatus(201);
         $response = $this->get('/api/v1/travels')
             ->assertJsonFragment(['name' => 'Travel name']);
+    }
+
+    public function test_updates_travel_failed_with_invalid_data(): void
+    {
+        $this->seed(RoleSeeder::class);
+        $user = User::factory()->create();
+        $user->roles()->attach(Role::where('name', 'editor')->value('id'));
+        $travel = Travel::factory()->create();
+
+        $response = $this->actingAs($user)->putJson('/api/v1/admin/travels/' . $travel->id, [
+            'name' => 'Travel name',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function test_updates_travel_successfully_with_valid_data(): void
+    {
+        $this->seed(RoleSeeder::class);
+        $user = User::factory()->create();
+        $user->roles()->attach(Role::where('name', 'editor')->value('id'));
+        $travel = Travel::factory()->create();
+
+        $response = $this->actingAs($user)->putJson('/api/v1/admin/travels/' . $travel->id, [
+            'name' => 'Travel name updated',
+            'is_public' => 1,
+            'description' => 'Some description',
+            'number_of_days' => 5,
+        ]);
+        $response->assertStatus(200);
     }
 }
