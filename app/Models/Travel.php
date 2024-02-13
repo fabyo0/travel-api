@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
 
 class Travel extends Model
 {
-    use HasFactory, HasUuids, Sluggable, HasUuids;
+    use HasFactory, HasUuids, HasUuids, Sluggable;
 
     protected $table = 'travels';
 
@@ -26,15 +26,15 @@ class Travel extends Model
     ];
 
     protected $casts = [
-        'is_admin' => 'boolean'
+        'is_admin' => 'boolean',
     ];
 
     public function sluggable(): array
     {
         return [
             'slug' => [
-                'source' => 'name'
-            ]
+                'source' => 'name',
+            ],
         ];
     }
 
@@ -56,7 +56,7 @@ class Travel extends Model
     public function numberOfNights(): Attribute
     {
         return Attribute::make(
-            get: fn($value, $attribute) => $attribute['number_of_days'] - 1
+            get: fn ($value, $attribute) => $attribute['number_of_days'] - 1
         );
     }
 }

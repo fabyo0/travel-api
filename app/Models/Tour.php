@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-
 class Tour extends Model
 {
     use HasFactory, HasUuids;
@@ -24,7 +23,7 @@ class Tour extends Model
     protected $casts = [
         //  'starting_date' => 'date:m/d/Y',
         //  'ending_date' => 'date:m/d/Y',
-        'price' => 'decimal'
+        'price' => 'decimal',
     ];
 
     public function travel(): BelongsTo
@@ -36,8 +35,8 @@ class Tour extends Model
     public function price(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value / 100,
-            set: fn($value) => $value * 100,
+            get: fn ($value) => $value / 100,
+            set: fn ($value) => $value * 100,
         );
     }
 }

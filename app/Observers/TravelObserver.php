@@ -11,4 +11,9 @@ class TravelObserver
     {
         $travel->slug = Str::slug($travel->name);
     }
+
+    public function updating(Travel $travel): void
+    {
+        $travel->slug = Str::slug($travel->name);
+    }
 }

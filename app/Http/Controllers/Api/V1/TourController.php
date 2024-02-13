@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ToursListRequest;
 use App\Http\Resources\TourResource;
 use App\Models\Travel;
-use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
@@ -26,8 +25,8 @@ class TourController extends Controller
                 $query->where('ending_date', '<=', $request->dateTo);
             })
             ->when($request->sortBy, function ($query) use ($request) {
-                if (!in_array($request->sortBy, ['price'])
-                    || (!in_array($request->sortOrder, ['asc', 'desc']))) {
+                if (! in_array($request->sortBy, ['price'])
+                    || (! in_array($request->sortOrder, ['asc', 'desc']))) {
                     return;
                 }
                 $query->orderBy($request->sortBy, $request->sortBy);
